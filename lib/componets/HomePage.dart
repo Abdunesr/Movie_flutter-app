@@ -51,61 +51,63 @@ class Homepage extends StatelessWidget {
           decoration: const BoxDecoration(
             image: DecorationImage(
               image: NetworkImage(
-                'https://th.bing.com/th/id/OIP.uCnHouUjwfPhL9wdw6eEQQHaEo?rs=1&pid=ImgDetMain',
+                'https://th.bing.com/th/id/OIP.DCN81-VUzgNduO8lLeVaYAHaLH?rs=1&pid=ImgDetMain',
               ),
-              fit: BoxFit.fill,
+              fit: BoxFit.cover,
             ),
           ),
-          child: Container(
+          child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Container(
-              padding: const EdgeInsets.all(8.0),
-              child: SingleChildScrollView(
-                child: Wrap(
-                  spacing: 16.0, // Horizontal space between items
-                  runSpacing: 16.0, // Vertical space between rows
-                  children: movies.map((movie) {
-                    return SizedBox(
-                      width: 120, // Set a fixed width for each item
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Image.network(
-                            movie.poster,
-                            width: 100,
-                            height: 140,
-                            fit: BoxFit.cover,
+            child: SingleChildScrollView(
+              child: Wrap(
+                spacing: 16.0, // Horizontal space between items
+                runSpacing: 16.0, // Vertical space between rows
+                children: movies.map((movie) {
+                  return SizedBox(
+                    width: (MediaQuery.of(context).size.width - 48) /
+                        3, // Adjust for 3 items per row
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.network(
+                          movie.poster,
+                          width: double
+                              .infinity, // Make the image take up the full width
+                          height: 120, // Reduced image height
+                          fit: BoxFit.cover,
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ), // Space between image and text
+                        Text(
+                          movie.title,
+                          style: const TextStyle(
+                            fontSize: 14, // Reduced text size
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 245, 39, 24),
                           ),
-                          const SizedBox(
-                              height: 8), // Space between image and text
-                          Text(
-                            movie.title,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            overflow:
-                                TextOverflow.ellipsis, // Handle long titles
-                            maxLines: 1,
-                            textAlign: TextAlign.center,
-                          ),
-                          Text(
-                            movie.year,
-                            style: const TextStyle(
-                                fontSize: 14, color: Colors.grey),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                ),
+                          overflow: TextOverflow.ellipsis, // Handle long titles
+                          maxLines: 1,
+                          textAlign: TextAlign.center,
+                        ),
+                        Text(
+                          movie.year,
+                          style: const TextStyle(
+                              fontSize: 12,
+                              color: Color.fromARGB(
+                                  255, 249, 62, 15)), // Smaller text size
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
               ),
             ),
           ),
         ),
         bottomNavigationBar: Container(
-          height: 46,
+          height: 56,
           child: BottomAppBar(
             color: const Color.fromARGB(255, 107, 194, 244),
             child: Row(
