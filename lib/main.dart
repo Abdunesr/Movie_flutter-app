@@ -28,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // Navigate to Homepage after 3 seconds
     Timer(const Duration(seconds: 3), () {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const Homepage()),
+        MaterialPageRoute(builder: (context) => Homepage()),
       );
     });
   }
