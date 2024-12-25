@@ -1,14 +1,80 @@
 import 'package:flutter/material.dart';
 import 'Drawers.dart';
-import '../data/movie_data.dart';
+import '../Apis/movie_service.dart';
 import '../model/movie_model.dart';
 import 'topRated.dart';
 import 'favouritePage.dart';
 
-class Homepage extends StatelessWidget {
+class Homepage extends StatefulWidget {
   Homepage({super.key});
 
-  final List<Movie> movies = tempMovieData;
+  @override
+  State<Homepage> createState() => _HomepageState();
+}
+
+class _HomepageState extends State<Homepage> {
+  final TextEditingController _searchController = TextEditingController();
+  final MovieService _movieService = MovieService();
+  List<Movie> _movies = [];
+  bool _isLoading = false;
+  String _error = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _searchInitialMovies(); // Perform initial search with "game"
+  }
+
+  void _searchMovies() async {
+    print("searching");
+    final query = _searchController.text.trim();
+    if (query.isEmpty) return;
+
+    setState(() {
+      _isLoading = true;
+      _error = '';
+    });
+
+    try {
+      print(query);
+      final movies = await _movieService.fetchMovies(query);
+
+      setState(() {
+        _movies = movies;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _searchInitialMovies() async {
+    const query = "game";
+    setState(() {
+      _isLoading = true;
+      _error = '';
+    });
+
+    try {
+      final movies = await _movieService.fetchMovies(query);
+      setState(() {
+        _movies = movies;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +86,9 @@ class Homepage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                width: 130,
+                width: 180,
                 child: TextField(
+                  controller: _searchController,
                   decoration: InputDecoration(
                     hintText: 'Search...',
                     hintStyle: const TextStyle(
@@ -30,13 +97,12 @@ class Homepage extends StatelessWidget {
                     border: InputBorder.none,
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.search),
-                      onPressed: () {
-                        // Add search functionality here
-                      },
+                      onPressed: _searchMovies,
                       color: const Color.fromARGB(179, 0, 0, 0),
                     ),
                   ),
                   style: const TextStyle(color: Color.fromARGB(255, 7, 7, 7)),
+                  onSubmitted: (_) => _searchMovies(),
                 ),
               ),
               const Padding(
@@ -51,61 +117,64 @@ class Homepage extends StatelessWidget {
           decoration: const BoxDecoration(
             image: DecorationImage(
               image: NetworkImage(
-                'https://th.bing.com/th/id/OIP.uCnHouUjwfPhL9wdw6eEQQHaEo?rs=1&pid=ImgDetMain',
+                'https://th.bing.com/th/id/OIP.DCN81-VUzgNduO8lLeVaYAHaLH?rs=1&pid=ImgDetMain',
               ),
-              fit: BoxFit.fill,
+              fit: BoxFit.cover,
             ),
           ),
-          child: Container(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              padding: const EdgeInsets.all(8.0),
-              child: SingleChildScrollView(
-                child: Wrap(
-                  spacing: 16.0, // Horizontal space between items
-                  runSpacing: 16.0, // Vertical space between rows
-                  children: movies.map((movie) {
-                    return SizedBox(
-                      width: 120, // Set a fixed width for each item
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Image.network(
-                            movie.poster,
-                            width: 100,
-                            height: 140,
-                            fit: BoxFit.cover,
-                          ),
-                          const SizedBox(
-                              height: 8), // Space between image and text
-                          Text(
-                            movie.title,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            overflow:
-                                TextOverflow.ellipsis, // Handle long titles
-                            maxLines: 1,
-                            textAlign: TextAlign.center,
-                          ),
-                          Text(
-                            movie.year,
-                            style: const TextStyle(
-                                fontSize: 14, color: Colors.grey),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+          child: _isLoading
+              ? Center(child: CircularProgressIndicator())
+              : _error.isNotEmpty
+                  ? Center(child: Text(_error))
+                  : Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SingleChildScrollView(
+                        child: Wrap(
+                          spacing: 16.0,
+                          runSpacing: 16.0,
+                          children: _movies.map((movie) {
+                            return SizedBox(
+                              width:
+                                  (MediaQuery.of(context).size.width - 48) / 3,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Image.network(
+                                    movie.poster,
+                                    width: double.infinity,
+                                    height: 120,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    movie.title,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color.fromARGB(255, 245, 39, 24),
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  Text(
+                                    movie.year,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Color.fromARGB(255, 249, 62, 15),
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
                       ),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-          ),
+                    ),
         ),
         bottomNavigationBar: Container(
-          height: 46,
+          height: 56,
           child: BottomAppBar(
             color: const Color.fromARGB(255, 107, 194, 244),
             child: Row(

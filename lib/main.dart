@@ -48,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
             const Text(
-              "UsePopcorn🍿🎥 ",
+              "UsePopcorn🍿 ",
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
