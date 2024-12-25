@@ -11,23 +11,12 @@ class Movie {
     required this.poster,
   });
 
-  // Factory method to create a Movie from JSON
-  /* factory Movie.fromJson(Map<String, dynamic> json) {
+  factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(
-      imdbID: json['imdbID'],
-      title: json['Title'],
-      year: json['Year'],
-      poster: json['Poster'],
+      imdbID: json['imdbID'] as String,
+      title: json['Title'] as String,
+      year: json['Year'] as String,
+      poster: json['Poster'] as String,
     );
-  } */
-
-  // Convert Movie object to JSON
-  /* Map<String, dynamic> toJson() {
-    return {
-      'imdbID': imdbID,
-      'Title': title,
-      'Year': year,
-      'Poster': poster,
-    };
-  }*/
+  }
 }
