@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'componets/HomePage.dart';
+import 'componets/homepage.dart';
 import 'Anim/anim.dart';
 
 void main() {
