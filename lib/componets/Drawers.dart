@@ -6,6 +6,7 @@ class Drawers extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      backgroundColor: const Color.fromARGB(255, 178, 74, 67),
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
@@ -23,7 +24,7 @@ class Drawers extends StatelessWidget {
               child: const Text(
                 '🍿Usepopcorn',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Color.fromARGB(255, 183, 74, 74),
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                   backgroundColor: Color.fromARGB(100, 0, 0,
