@@ -185,6 +185,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                             ),
                           ),
                           const SizedBox(height: 8),
+                          Text(widget.movie.Type),
                           Text(
                             "IMDb ID: ${widget.movie.imdbID}",
                             style: const TextStyle(
@@ -207,7 +208,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                   itemCount: 10, // Number of posters
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 6.0),
                       child: Image.network(
                         widget.movie.poster, // Use the same poster for now
                         fit: BoxFit.cover,
