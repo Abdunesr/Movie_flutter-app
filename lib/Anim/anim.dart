@@ -10,7 +10,7 @@ class SplashScreens extends StatefulWidget {
 class _SplashScreensState extends State<SplashScreens>
     with TickerProviderStateMixin {
   late AnimationController _backgroundController;
-  late AnimationController _popcornController;
+  late AnimationController _logoController;
   late AnimationController _textController;
   late Animation<Color?> _backgroundAnimation;
 
@@ -18,31 +18,34 @@ class _SplashScreensState extends State<SplashScreens>
   void initState() {
     super.initState();
 
-    // Animated gradient background
+    // Background gradient animation
     _backgroundController = AnimationController(
-      duration: const Duration(seconds: 10),
+      duration: const Duration(seconds: 5),
       vsync: this,
     )..repeat(reverse: true);
 
     _backgroundAnimation = ColorTween(
-      begin: const Color.fromARGB(255, 234, 149, 245),
-      end: const Color.fromARGB(108, 35, 207, 255),
-    ).animate(_backgroundController);
+      begin: const Color(0xFF141E30),
+      end: const Color(0xFF243B55),
+    ).animate(CurvedAnimation(
+      parent: _backgroundController,
+      curve: Curves.easeInOut,
+    ));
 
-    // Popcorn bounce and spin animation
-    _popcornController = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    )..repeat(reverse: false);
-
-    // Typewriter effect for the text
-    _textController = AnimationController(
+    // Logo animation
+    _logoController = AnimationController(
       duration: const Duration(seconds: 3),
       vsync: this,
     )..forward();
 
-    // Transition to the next screen
-    Timer(const Duration(seconds: 5), () {
+    // Text fade-in animation
+    _textController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..forward();
+
+    // Navigate to the next screen
+    Timer(const Duration(seconds: 6), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const NextScreen()),
@@ -53,7 +56,7 @@ class _SplashScreensState extends State<SplashScreens>
   @override
   void dispose() {
     _backgroundController.dispose();
-    _popcornController.dispose();
+    _logoController.dispose();
     _textController.dispose();
     super.dispose();
   }
@@ -80,62 +83,40 @@ class _SplashScreensState extends State<SplashScreens>
                   ),
                 ),
               ),
-              // Main content
+              // Animated content
               Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Typewriter effect for "Welcome to"
+                    // Logo animation
                     AnimatedBuilder(
-                      animation: _textController,
+                      animation: _logoController,
                       builder: (context, child) {
-                        int charCount = (_textController.value * 10).toInt();
-                        String text = "Welcome to".substring(
-                            0, charCount.clamp(0, "Welcome to".length));
-                        return Text(
-                          text,
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    // Bouncing and spinning popcorn
-                    AnimatedBuilder(
-                      animation: _popcornController,
-                      child: const Text(
-                        "🍿",
-                        style: TextStyle(fontSize: 50),
-                      ),
-                      builder: (context, child) {
-                        return Transform.rotate(
-                          angle: _popcornController.value * 2 * pi,
-                          child: Transform.translate(
-                            offset: Offset(
-                                0, sin(_popcornController.value * pi) * 20),
+                        return Transform.scale(
+                          scale: 1 + (_logoController.value * 0.2),
+                          child: Opacity(
+                            opacity: _logoController.value,
                             child: child,
                           ),
                         );
                       },
+                      child: const Icon(
+                        Icons.local_movies,
+                        size: 100,
+                        color: Colors.yellow,
+                      ),
                     ),
                     const SizedBox(height: 20),
-                    // Text with glowing effect
-                    const Text(
-                      "UsePopcorn🍿",
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.yellow,
-                        shadows: [
-                          Shadow(
-                            blurRadius: 10,
-                            color: Colors.yellowAccent,
-                            offset: Offset(0, 0),
-                          ),
-                        ],
+                    // Text animation
+                    FadeTransition(
+                      opacity: _textController,
+                      child: const Text(
+                        "Welcome to UsePopcorn",
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 40),
@@ -168,13 +149,13 @@ class ParticlePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.5)
-      ..strokeWidth = 2;
+      ..color = Colors.white.withOpacity(0.4)
+      ..strokeWidth = 1.5;
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 80; i++) {
       final dx = random.nextDouble() * size.width;
       final dy = random.nextDouble() * size.height;
-      canvas.drawCircle(Offset(dx, dy), random.nextDouble() * 3, paint);
+      canvas.drawCircle(Offset(dx, dy), random.nextDouble() * 2, paint);
     }
   }
 

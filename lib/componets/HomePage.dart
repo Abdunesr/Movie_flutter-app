@@ -31,7 +31,10 @@ class _HomepageState extends State<Homepage> {
       ..initialize().then((_) {
         setState(() {}); // Refresh the state after initialization
         _videoController.setLooping(true); // Loop the video
-        _videoController.play(); // Start playing the video
+        _videoController.setVolume(0.0); // Mute the video
+        _videoController.play(); // Play the video
+
+        // Start playing the video
       });
   }
 

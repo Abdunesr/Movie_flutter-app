@@ -1,8 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:movie_app/Widgets/star.dart';
 import 'package:video_player/video_player.dart';
 import '../model/movie_model.dart';
 import '../favourites_manager.dart';
+import 'package:movie_app/Widgets/star.dart';
 
 class MovieDetailScreen extends StatefulWidget {
   final Movie movie;
@@ -16,6 +17,8 @@ class MovieDetailScreen extends StatefulWidget {
 class _MovieDetailScreenState extends State<MovieDetailScreen> {
   bool isFavourite = false;
   late VideoPlayerController _videoController;
+  late PageController _posterController;
+  Timer? _scrollTimer;
 
   @override
   void initState() {
@@ -28,49 +31,63 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     // Initialize the video player for the background
     _videoController = VideoPlayerController.asset('assets/background.mp4')
       ..initialize().then((_) {
-        print("Video Initialized Successfully");
-        setState(() {}); // Refresh the state after initialization
-        _videoController.setLooping(true); // Loop the video
-        _videoController.play(); // Start playing the video
+        setState(() {});
+        _videoController.setLooping(true);
+        _videoController.setVolume(0); // Mute the video
+        _videoController.play();
       }).catchError((error) {
         print("Error initializing video: $error");
       });
+
+    // Initialize the page controller for posters
+    _posterController = PageController(viewportFraction: 0.3);
+
+    // Start the auto-scroll timer
+    _startAutoScroll();
   }
 
   @override
   void dispose() {
-    _videoController.dispose(); // Dispose the video player when not in use
+    _videoController.dispose();
+    _posterController.dispose();
+    _scrollTimer?.cancel();
     super.dispose();
+  }
+
+  void _startAutoScroll() {
+    _scrollTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      if (_posterController.hasClients) {
+        final nextPage = (_posterController.page! + 1) % 10; // Infinite loop
+        _posterController.animateToPage(
+          nextPage.toInt(),
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
   }
 
   void toggleFavourite() {
     setState(() {
       if (isFavourite) {
-        // Remove the movie from favorites
         FavouritesManager.favourites.removeWhere(
             (favouriteMovie) => favouriteMovie.imdbID == widget.movie.imdbID);
         isFavourite = false;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          duration: const Duration(seconds: 3),
-          content: Text('Removed sucesfully!'),
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Removed successfully!')),
+        );
       } else {
-        // Check if the movie already exists in favorites
         if (!FavouritesManager.favourites.any(
             (favouriteMovie) => favouriteMovie.imdbID == widget.movie.imdbID)) {
           FavouritesManager.favourites.add(widget.movie);
           isFavourite = true;
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Added sucesfully!'),
-            ),
+            const SnackBar(content: Text('Added successfully!')),
           );
         } else {
-          // Optionally, show a message that the movie is already in favorites
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("This movie is already in your favorites."),
-            ),
+                content: Text('This movie is already in favorites.')),
           );
         }
       }
@@ -83,14 +100,14 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
       appBar: AppBar(
         title: Text(
           widget.movie.title,
-          style: const TextStyle(color: Color.fromARGB(255, 2, 2, 2)),
+          style: const TextStyle(color: Colors.black),
         ),
         backgroundColor: const Color.fromARGB(255, 240, 97, 86),
         actions: [
           IconButton(
             icon: Icon(
               isFavourite ? Icons.star : Icons.star_border_purple500_rounded,
-              color: const Color.fromARGB(255, 227, 15, 0),
+              color: Colors.red,
             ),
             onPressed: toggleFavourite,
           ),
@@ -101,41 +118,36 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
           // Video background
           _videoController.value.isInitialized
               ? Positioned.fill(
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    child: FittedBox(
-                      fit: BoxFit.cover,
-                      child: SizedBox(
-                        width: _videoController.value.size.width,
-                        height: _videoController.value.size.height,
-                        child: VideoPlayer(_videoController),
-                      ),
+                  child: FittedBox(
+                    fit: BoxFit.cover,
+                    child: SizedBox(
+                      width: _videoController.value.size.width,
+                      height: _videoController.value.size.height,
+                      child: VideoPlayer(_videoController),
                     ),
                   ),
                 )
               : const Center(child: CircularProgressIndicator()),
 
-          // Content overlay (Opacity layer)
+          // Content overlay
           Positioned.fill(
             child: Opacity(
-              opacity: 0.7, // Add opacity to make the content more readable
+              opacity: 0.7,
               child: Container(
-                color:
-                    Colors.black.withOpacity(0.4), // Semi-transparent overlay
+                color: Colors.black.withOpacity(0.4),
               ),
             ),
           ),
 
-          // Main content (movie details)
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+          // Main content
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
                   children: [
-                    // Poster on the left
+                    // Poster
                     Column(
                       children: [
                         Image.network(
@@ -145,16 +157,11 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                           fit: BoxFit.cover,
                         ),
                         const SizedBox(height: 8),
-                        // Rating bar below the poster
-                        Column(
-                          children: [
-                            Star(),
-                          ],
-                        ),
+                        Star(),
                       ],
                     ),
                     const SizedBox(width: 16),
-                    // Details on the right
+                    // Movie details
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,28 +192,31 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                               color: Colors.red,
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            "Summary:",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                            ),
-                          ),
-                          const Text(
-                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus euismod, nunc id tristique pharetra, neque massa facilisis risus.",
-                            style: TextStyle(fontSize: 14, color: Colors.red),
-                            maxLines: 5,
-                            overflow: TextOverflow.ellipsis,
-                          ),
                         ],
                       ),
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+
+              // Scrolling posters at the bottom
+              Expanded(
+                child: PageView.builder(
+                  controller: _posterController,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 10, // Number of posters
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Image.network(
+                        widget.movie.poster, // Use the same poster for now
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ],
       ),
