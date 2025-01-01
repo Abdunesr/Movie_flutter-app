@@ -121,4 +121,28 @@ final List<Movie> tempMovieData = [
     poster:
         "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
   ),
+  Movie(
+    imdbID: "tt6751668",
+    title: "Parasite",
+    year: "2019",
+    Type: "Movie",
+    poster:
+        "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
+  ),
+  Movie(
+    imdbID: "tt6751668",
+    title: "Parasite",
+    year: "2019",
+    Type: "Movie",
+    poster:
+        "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
+  ),
+  Movie(
+    imdbID: "tt6751668",
+    title: "Parasite",
+    year: "2019",
+    Type: "Movie",
+    poster:
+        "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
+  ),
 ];

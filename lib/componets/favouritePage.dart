@@ -52,13 +52,16 @@ class _FavouritePageState extends State<FavouritePage>
     return Scaffold(
       appBar: AppBar(
         title: const Text("Favourites"),
-        backgroundColor: const Color.fromARGB(255, 240, 97, 86),
+        backgroundColor: const Color.fromARGB(255, 27, 46, 62),
+        iconTheme: Theme.of(context).iconTheme,
       ),
       body: FavouritesManager.favourites.isEmpty
-          ? const Center(
+          ? Center(
               child: Text(
                 "No Favourite Movies selected",
-                style: TextStyle(fontSize: 20),
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontSize: 20,
+                    ),
               ),
             )
           : ListView.builder(
@@ -79,8 +82,14 @@ class _FavouritePageState extends State<FavouritePage>
                     width: 50,
                     fit: BoxFit.cover,
                   ),
-                  title: Text(movie.title),
-                  subtitle: Text(movie.year),
+                  title: Text(
+                    movie.title,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  subtitle: Text(
+                    movie.year,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
                   trailing: GestureDetector(
                     onTap: () => _toggleFavourite(movie),
                     child: RotationTransition(
