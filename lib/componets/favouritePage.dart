@@ -53,7 +53,8 @@ class _FavouritePageState extends State<FavouritePage>
       appBar: AppBar(
         title: const Text("Favourites"),
         backgroundColor: const Color.fromARGB(255, 27, 46, 62),
-        iconTheme: Theme.of(context).iconTheme,
+        iconTheme:
+            const IconThemeData(color: Color.fromARGB(255, 246, 235, 133)),
       ),
       body: FavouritesManager.favourites.isEmpty
           ? Center(
