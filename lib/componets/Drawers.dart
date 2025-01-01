@@ -6,6 +6,7 @@ class Drawers extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      backgroundColor: const Color.fromARGB(255, 27, 46, 62),
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
@@ -23,7 +24,7 @@ class Drawers extends StatelessWidget {
               child: const Text(
                 '🍿Usepopcorn',
                 style: TextStyle(
-                  color: Color.fromARGB(255, 183, 74, 74),
+                  color: Color.fromARGB(255, 249, 219, 120),
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                   backgroundColor: Color.fromARGB(100, 0, 0,
@@ -33,22 +34,40 @@ class Drawers extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.home),
-            title: const Text('Home'),
+            leading: const Icon(
+              Icons.home,
+              color: Color.fromARGB(255, 197, 165, 90), // Yellow icon color
+            ),
+            title: const Text(
+              'Home',
+              style: TextStyle(color: Colors.white),
+            ),
             onTap: () {
               Navigator.pop(context); // Close drawer
             },
           ),
           ListTile(
-            leading: const Icon(Icons.movie),
-            title: const Text('Movies'),
+            leading: const Icon(
+              Icons.movie,
+              color: Color(0xFFFFC947), // Yellow icon color
+            ),
+            title: const Text(
+              'Movies',
+              style: TextStyle(color: Colors.white),
+            ),
             onTap: () {
               Navigator.pop(context); // Close drawer
             },
           ),
           ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
+            leading: const Icon(
+              Icons.settings,
+              color: Color(0xFFFFC947), // Yellow icon color
+            ),
+            title: const Text(
+              'Settings',
+              style: TextStyle(color: Colors.white),
+            ),
             onTap: () {
               Navigator.pop(context); // Close drawer
             },

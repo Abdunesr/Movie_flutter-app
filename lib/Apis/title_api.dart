@@ -1,22 +1,27 @@
-import '../model/model_title.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:movie_app/model/model_title.dart';
 
-Future<PowerSeries> fetchPowerSeries(String title, String apiKey) async {
-  final url = 'http://www.omdbapi.com/?apikey=$apiKey&t=$title';
+class MovieSearchService {
+  final String apiKey = 'b481392d'; // Replace with your API key
 
-  // Send a GET request to the API
-  final response = await http.get(Uri.parse(url));
+  // Function to fetch movies based on search query (e.g., "game")
 
-  if (response.statusCode == 200) {
-    // If the request is successful, parse the JSON data
-    final Map<String, dynamic> jsonData = json.decode(response.body);
-    if (jsonData['Response'] == 'True') {
-      return PowerSeries.fromJson(jsonData); // Return parsed object
+  // Function to fetch detailed movie data based on movie title
+  Future<Movie> fetchMovieDetails(String title) async {
+    print("hanim ahani m ahanim ahnaam hnaim");
+    final url = Uri.parse('http://www.omdbapi.com/?apikey=$apiKey&t=$title');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['Response'] == 'True') {
+        return Movie.fromJson(data);
+      } else {
+        throw Exception('Failed to fetch movie details');
+      }
     } else {
-      throw Exception('Failed to load series data');
+      throw Exception('Failed to load movie details');
     }
-  } else {
-    throw Exception('Failed to fetch data');
   }
 }

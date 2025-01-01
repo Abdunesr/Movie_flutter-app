@@ -8,7 +8,7 @@ class TopRatedPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Top Rated"),
-        backgroundColor: const Color.fromARGB(197, 6, 141, 165),
+        backgroundColor: const Color.fromARGB(255, 27, 46, 62),
       ),
       body: const Center(
         child: Text(
