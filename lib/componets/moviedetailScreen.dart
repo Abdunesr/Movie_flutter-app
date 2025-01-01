@@ -100,14 +100,15 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
       appBar: AppBar(
         title: Text(
           widget.movie.title,
-          style: const TextStyle(color: Colors.black),
+          style: Theme.of(context).appBarTheme.titleTextStyle,
         ),
-        backgroundColor: const Color.fromARGB(255, 240, 97, 86),
+        backgroundColor: const Color.fromARGB(
+            255, 27, 46, 62), // Replace with your desired color
         actions: [
           IconButton(
             icon: Icon(
               isFavourite ? Icons.star : Icons.star_border_purple500_rounded,
-              color: Colors.red,
+              color: Theme.of(context).iconTheme.color,
             ),
             onPressed: toggleFavourite,
           ),
@@ -168,30 +169,20 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         children: [
                           Text(
                             widget.movie.title,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                            ),
+                            style: Theme.of(context).textTheme.displayLarge,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 8),
                           Text(
                             "Year: ${widget.movie.year}",
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.red,
-                            ),
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           const SizedBox(height: 8),
                           Text(widget.movie.Type),
                           Text(
                             "IMDb ID: ${widget.movie.imdbID}",
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.red,
-                            ),
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ],
                       ),

@@ -8,7 +8,7 @@ class BottomNavigation extends StatelessWidget {
     return Container(
       height: 56,
       child: BottomAppBar(
-        color: const Color.fromARGB(255, 244, 119, 107),
+        color: Theme.of(context).primaryColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [

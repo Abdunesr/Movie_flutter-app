@@ -33,8 +33,6 @@ class _HomepageState extends State<Homepage> {
         _videoController.setLooping(true); // Loop the video
         _videoController.setVolume(0.0); // Mute the video
         _videoController.play(); // Play the video
-
-        // Start playing the video
       });
   }
 
@@ -99,7 +97,6 @@ class _HomepageState extends State<Homepage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 240, 97, 86),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -118,17 +115,13 @@ class _HomepageState extends State<Homepage> {
                   },
                   decoration: InputDecoration(
                     hintText: 'Search...',
-                    hintStyle: const TextStyle(
-                      color: Color.fromARGB(179, 17, 17, 17),
-                    ),
+                    hintStyle: const TextStyle(),
                     border: InputBorder.none,
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.search),
                       onPressed: _searchMovies,
-                      color: const Color.fromARGB(179, 0, 0, 0),
                     ),
                   ),
-                  style: const TextStyle(color: Color.fromARGB(255, 7, 7, 7)),
                   onSubmitted: (_) => _searchMovies(),
                 ),
               ),
@@ -159,8 +152,8 @@ class _HomepageState extends State<Homepage> {
             // Content overlay (Opacity layer)
             Positioned.fill(
               child: Container(
-                color:
-                    Colors.black.withOpacity(0.4), // Semi-transparent overlay
+                color: const Color.fromARGB(255, 95, 138, 156)
+                    .withOpacity(0.4), // Semi-transparent overlay
               ),
             ),
 
@@ -205,8 +198,6 @@ class _HomepageState extends State<Homepage> {
                                         style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
-                                          color:
-                                              Color.fromARGB(255, 245, 39, 24),
                                         ),
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 1,
@@ -214,11 +205,7 @@ class _HomepageState extends State<Homepage> {
                                       ),
                                       Text(
                                         movie.year,
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          color:
-                                              Color.fromARGB(255, 249, 62, 15),
-                                        ),
+                                        style: const TextStyle(),
                                         textAlign: TextAlign.center,
                                       ),
                                     ],
