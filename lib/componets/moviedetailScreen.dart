@@ -5,6 +5,7 @@ import 'package:video_player/video_player.dart';
 import '../model/movie_model.dart';
 import '../favourites_manager.dart';
 import 'package:movie_app/Widgets/star.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MovieDetailScreen extends StatefulWidget {
   final Movie movie;
@@ -107,7 +108,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
       backgroundColor: const Color.fromARGB(0, 24, 43, 50),
       builder: (context) {
         return FractionallySizedBox(
-          heightFactor: 0.5, // Adjust the height as needed
+          heightFactor: 0.6, // Adjust the height as needed
           child: ClipRRect(
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(16),
@@ -115,71 +116,103 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
             ),
             child: Container(
               color: const Color.fromARGB(255, 22, 30, 44),
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     widget.movie.title,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold, color: Colors.white),
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                   ),
                   const SizedBox(height: 8),
                   Text("Year: ${widget.movie.year}",
-                      style: TextStyle(color: Colors.white)),
+                      style: const TextStyle(color: Colors.white)),
                   const SizedBox(height: 8),
                   Row(
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(0.0),
                         child: Image.network(
+                          widget.movie.poster,
                           width: 200,
                           height: 150,
-                          widget.movie.poster,
                         ),
                       ),
-                      SizedBox(
-                        width: 0,
-                      ),
+                      const SizedBox(width: 6),
                       Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Released ${widget.movieInfo.Released} ",
-                            style: TextStyle(color: Colors.white),
+                            "Released: ${widget.movieInfo.Released}",
+                            style: const TextStyle(color: Colors.white),
                           ),
-                          Text("imdbRating: ${widget.movieInfo.imdbRating}  ⭐",
-                              style: TextStyle(
-                                color: Colors.white,
-                              )),
                           Text(
-                            "Genre${widget.movieInfo.Genre}",
-                            style: TextStyle(color: Colors.white),
-                          )
+                            "IMDb Rating: ${widget.movieInfo.imdbRating} ⭐",
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          Text(
+                            "Genre: ${widget.movieInfo.Genre}",
+                            style: const TextStyle(color: Colors.white),
+                          ),
                         ],
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Film stories: ${widget.movieInfo.plot}",
-                    style: TextStyle(color: Colors.white),
+                    "Plot: ${widget.movieInfo.plot}",
+                    style: const TextStyle(color: Colors.white),
                   ),
-                  const SizedBox(
-                    height: 3,
-                  ),
+                  const SizedBox(height: 10),
                   Text(
                     "Actors",
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
+                  const SizedBox(height: 5),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: actorsList
-                        .map((actor) => Text(actor,
-                            style: TextStyle(
-                                color:
-                                    const Color.fromARGB(255, 168, 152, 81))))
+                        .map((actor) => Text(
+                              actor,
+                              style: const TextStyle(
+                                  color: Color.fromARGB(255, 168, 152, 81)),
+                            ))
                         .toList(),
-                  )
+                  ),
+                  SizedBox(
+                    height: 6,
+                  ),
+                  Center(
+                    child: TextButton(
+                      onPressed: () async {
+                        final temp = widget.movie.title.replaceAll(' ', '-');
+                        final url =
+                            'https://www.gojara/.com/$temp'; // Assuming this is the correct website
+                        if (await canLaunchUrl(Uri.parse(url))) {
+                          await launchUrl(Uri.parse(url));
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('make sure you ahve a connection'),
+                            ),
+                          );
+                        }
+                      },
+                      child: Text(
+                        'Dowload it ',
+                        style: TextStyle(
+                          color: const Color.fromARGB(255, 157, 146, 64),
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
