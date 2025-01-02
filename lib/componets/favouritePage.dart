@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:movie_app/componets/moviedetailScreen.dart';
 import '../favourites_manager.dart';
 import '../model/movie_model.dart';
+import 'package:movie_app/Apis/title_api.dart';
 
 class FavouritePage extends StatefulWidget {
-  const FavouritePage({super.key});
+  final moviesearchbytitle = MovieSearchService();
+  FavouritePage({super.key});
 
   @override
   State<FavouritePage> createState() => _FavouritePageState();
@@ -70,12 +72,15 @@ class _FavouritePageState extends State<FavouritePage>
               itemBuilder: (context, index) {
                 final movie = FavouritesManager.favourites[index];
                 return ListTile(
-                  onTap: () {
+                  onTap: () async {
+                    final title = movie.title;
+                    final moviesInfo = await widget.moviesearchbytitle
+                        .fetchMovieDetails(title);
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MovieDetailScreen(movie: movie),
-                      ),
+                          builder: (context) => MovieDetailScreen(
+                              movie: movie, movieInfo: moviesInfo)),
                     );
                   },
                   leading: Image.network(

@@ -5,6 +5,7 @@ import 'Drawers.dart';
 import '../Apis/movie_service.dart';
 import '../model/movie_model.dart';
 import 'moviedetailScreen.dart';
+import 'package:movie_app/Apis/title_api.dart';
 
 class Homepage extends StatefulWidget {
   Homepage({super.key});
@@ -16,6 +17,7 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   final TextEditingController _searchController = TextEditingController();
   final MovieService _movieService = MovieService();
+  final moviesearchbytitle = MovieSearchService();
   List<Movie> _movies = [];
   bool _isLoading = false;
   String _error = '';
@@ -70,7 +72,7 @@ class _HomepageState extends State<Homepage> {
   }
 
   void _searchInitialMovies() async {
-    const query = "game";
+    const query = "fire";
     setState(() {
       _isLoading = true;
       _error = '';
@@ -115,7 +117,7 @@ class _HomepageState extends State<Homepage> {
                   },
                   decoration: InputDecoration(
                     hintText: 'Search...',
-                    hintStyle: const TextStyle(),
+                    hintStyle: const TextStyle(color: Colors.white),
                     border: InputBorder.none,
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.search),
@@ -170,12 +172,18 @@ class _HomepageState extends State<Homepage> {
                             runSpacing: 16.0,
                             children: _movies.map((movie) {
                               return GestureDetector(
-                                onTap: () {
+                                onTap: () async {
+                                  final title = movie.title;
+
+                                  final moviesInfo = await moviesearchbytitle
+                                      .fetchMovieDetails(title);
+                                  print(
+                                      "hey hey hey hey hey heye    jlfkljafkjafkjksjafmdsaf");
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          MovieDetailScreen(movie: movie),
+                                      builder: (context) => MovieDetailScreen(
+                                          movie: movie, movieInfo: moviesInfo),
                                     ),
                                   );
                                 },
@@ -196,6 +204,7 @@ class _HomepageState extends State<Homepage> {
                                       Text(
                                         movie.title,
                                         style: const TextStyle(
+                                          color: Colors.white,
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -205,7 +214,8 @@ class _HomepageState extends State<Homepage> {
                                       ),
                                       Text(
                                         movie.year,
-                                        style: const TextStyle(),
+                                        style: const TextStyle(
+                                            color: Colors.white),
                                         textAlign: TextAlign.center,
                                       ),
                                     ],

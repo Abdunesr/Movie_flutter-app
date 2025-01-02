@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:movie_app/model/model_title.dart';
 import 'package:video_player/video_player.dart';
 import '../model/movie_model.dart';
 import '../favourites_manager.dart';
@@ -7,8 +8,11 @@ import 'package:movie_app/Widgets/star.dart';
 
 class MovieDetailScreen extends StatefulWidget {
   final Movie movie;
+  final Movies movieInfo;
 
-  const MovieDetailScreen({Key? key, required this.movie}) : super(key: key);
+  const MovieDetailScreen(
+      {Key? key, required this.movie, required this.movieInfo})
+      : super(key: key);
 
   @override
   _MovieDetailScreenState createState() => _MovieDetailScreenState();
@@ -94,6 +98,97 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     });
   }
 
+  void _showMovieInfoPopup() {
+    List<String> actorsList = widget.movieInfo.Actors.split(', ');
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color.fromARGB(0, 24, 43, 50),
+      builder: (context) {
+        return FractionallySizedBox(
+          heightFactor: 0.5, // Adjust the height as needed
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(16),
+              topRight: Radius.circular(16),
+            ),
+            child: Container(
+              color: const Color.fromARGB(255, 22, 30, 44),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.movie.title,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                  const SizedBox(height: 8),
+                  Text("Year: ${widget.movie.year}",
+                      style: TextStyle(color: Colors.white)),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Image.network(
+                          width: 200,
+                          height: 150,
+                          widget.movie.poster,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 0,
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            "Released ${widget.movieInfo.Released} ",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          Text("imdbRating: ${widget.movieInfo.imdbRating}  ⭐",
+                              style: TextStyle(
+                                color: Colors.white,
+                              )),
+                          Text(
+                            "Genre${widget.movieInfo.Genre}",
+                            style: TextStyle(color: Colors.white),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Film stories: ${widget.movieInfo.plot}",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  const SizedBox(
+                    height: 3,
+                  ),
+                  Text(
+                    "Actors",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: actorsList
+                        .map((actor) => Text(actor,
+                            style: TextStyle(
+                                color:
+                                    const Color.fromARGB(255, 168, 152, 81))))
+                        .toList(),
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,8 +197,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
           widget.movie.title,
           style: Theme.of(context).appBarTheme.titleTextStyle,
         ),
-        backgroundColor: const Color.fromARGB(
-            255, 27, 46, 62), // Replace with your desired color
+        backgroundColor: const Color.fromARGB(255, 27, 46, 62),
         actions: [
           IconButton(
             icon: Icon(
@@ -149,17 +243,23 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                 child: Row(
                   children: [
                     // Poster
-                    Column(
-                      children: [
-                        Image.network(
-                          widget.movie.poster,
-                          width: 150,
-                          height: 225,
-                          fit: BoxFit.cover,
-                        ),
-                        const SizedBox(height: 8),
-                        Star(),
-                      ],
+                    GestureDetector(
+                      onTap: _showMovieInfoPopup,
+                      child: Column(
+                        children: [
+                          Image.network(
+                            widget.movie.poster,
+                            width: 150,
+                            height: 225,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(Icons.broken_image, size: 150);
+                            },
+                          ),
+                          const SizedBox(height: 8),
+                          Star(),
+                        ],
+                      ),
                     ),
                     const SizedBox(width: 16),
                     // Movie details
@@ -201,8 +301,11 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 6.0),
                       child: Image.network(
-                        widget.movie.poster, // Use the same poster for now
+                        widget.movie.poster,
                         fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(Icons.broken_image);
+                        },
                       ),
                     );
                   },
