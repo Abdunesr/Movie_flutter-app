@@ -1,11 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:movie_app/model/model_title.dart';
 import 'package:video_player/video_player.dart';
 import '../model/movie_model.dart';
 import '../favourites_manager.dart';
 import 'package:movie_app/Widgets/star.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
 class MovieDetailScreen extends StatefulWidget {
   final Movie movie;
@@ -24,6 +25,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   late VideoPlayerController _videoController;
   late PageController _posterController;
   Timer? _scrollTimer;
+  List<String> relatedPosters = [];
 
   @override
   void initState() {
@@ -49,6 +51,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
     // Start the auto-scroll timer
     _startAutoScroll();
+
+    // Fetch related movies
+    _fetchRelatedMovies();
   }
 
   @override
@@ -62,7 +67,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   void _startAutoScroll() {
     _scrollTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
       if (_posterController.hasClients) {
-        final nextPage = (_posterController.page! + 1) % 10; // Infinite loop
+        final nextPage = (_posterController.page! + 1) % relatedPosters.length;
         _posterController.animateToPage(
           nextPage.toInt(),
           duration: const Duration(milliseconds: 500),
@@ -70,6 +75,35 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
         );
       }
     });
+  }
+
+  Future<void> _fetchRelatedMovies() async {
+    final apiKey = "b481392d"; // Replace with your actual API key
+    final firstThreeLetters = widget.movie.title.substring(0, 5);
+    print(firstThreeLetters);
+    print("hanim hanim hanim hanim");
+    final url = Uri.parse(
+        'http://www.omdbapi.com/?apikey=$apiKey&s=$firstThreeLetters');
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['Search'] != null) {
+          setState(() {
+            relatedPosters = (data['Search'] as List)
+                .map((movie) => movie['Poster'] as String)
+                .where((poster) => poster != "N/A")
+                .toList();
+          });
+        }
+      } else {
+        print("Failed to fetch related movies: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error fetching related movies: $e");
+    }
   }
 
   void toggleFavourite() {
@@ -97,157 +131,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
         }
       }
     });
-  }
-
-  void _showMovieInfoPopup() {
-    List<String> actorsList = widget.movieInfo.Actors.split(', ');
-    List<String> Writers = widget.movieInfo.Writer.split(', ');
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: const Color.fromARGB(0, 24, 43, 50),
-      builder: (context) {
-        return FractionallySizedBox(
-          heightFactor: 0.6, // Adjust the height as needed
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.circular(16),
-            ),
-            child: Container(
-              color: const Color.fromARGB(255, 22, 30, 44),
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.movie.title,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text("Year: ${widget.movie.year}",
-                      style: const TextStyle(color: Colors.white)),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(0.0),
-                        child: Image.network(
-                          widget.movie.poster,
-                          width: 200,
-                          height: 150,
-                        ),
-                      ),
-                      const SizedBox(width: 3),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Released: ${widget.movieInfo.Released}",
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                          Text(
-                            "IMDb Rating: ${widget.movieInfo.imdbRating} ⭐",
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                          Text(
-                            "Genre: ${widget.movieInfo.Genre}",
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "Plot: ${widget.movieInfo.plot}",
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  const SizedBox(height: 7),
-                  Text(
-                    "Actors",
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: actorsList
-                            .map((actor) => Text(
-                                  actor,
-                                  style: const TextStyle(
-                                      color: Color.fromARGB(255, 168, 152, 81)),
-                                ))
-                            .toList(),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            "Written By",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          Column(
-                            children: Writers.map((writer) => Text(
-                                  " $writer",
-                                  style: TextStyle(
-                                      color: const Color.fromARGB(
-                                          220, 163, 152, 53)),
-                                )).toList(),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    "Directed By: ${widget.movieInfo.Director}",
-                    style: const TextStyle(
-                        color: Color.fromARGB(255, 128, 109, 48)),
-                  ),
-                  const SizedBox(height: 10),
-                  Center(
-                    child: TextButton(
-                      onPressed: () async {
-                        final temp = widget.movie.title.replaceAll(' ', '-');
-                        final url =
-                            'https://www.gojara/.com/$temp'; // Assuming this is the correct website
-                        if (await canLaunchUrl(Uri.parse(url))) {
-                          await launchUrl(Uri.parse(url));
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('make sure you ahve a connection'),
-                            ),
-                          );
-                        }
-                      },
-                      child: Text(
-                        'Dowload it ',
-                        style: TextStyle(
-                          color: const Color.fromARGB(255, 157, 146, 64),
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
   }
 
   @override
@@ -305,7 +188,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                   children: [
                     // Poster
                     GestureDetector(
-                      onTap: _showMovieInfoPopup,
+                      onTap: () {},
                       child: Column(
                         children: [
                           Image.network(
@@ -357,23 +240,26 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
               // Scrolling posters at the bottom
               Expanded(
-                child: PageView.builder(
-                  controller: _posterController,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 10, // Number of posters
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 6.0),
-                      child: Image.network(
-                        widget.movie.poster,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.broken_image);
+                child: relatedPosters.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : PageView.builder(
+                        controller: _posterController,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: relatedPosters.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 6.0),
+                            child: Image.network(
+                              relatedPosters[index],
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.broken_image);
+                              },
+                            ),
+                          );
                         },
                       ),
-                    );
-                  },
-                ),
               ),
             ],
           ),
