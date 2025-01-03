@@ -8,6 +8,8 @@ class Movies {
   final String Runtime;
   final String Genre;
   final String Actors;
+  final String Director;
+  final String Writer;
 
   Movies({
     required this.title,
@@ -19,6 +21,8 @@ class Movies {
     required this.Runtime,
     required this.Genre,
     required this.Actors,
+    required this.Director,
+    required this.Writer,
   });
 
   // Factory method to parse data from the API response
@@ -33,6 +37,8 @@ class Movies {
       Runtime: json['Runtime'] ?? '',
       Genre: json['Genre'] ?? '',
       Actors: json['Actors'] ?? '',
+      Director: json['Director'] ?? '',
+      Writer: json['Writer'] ?? '',
     );
   }
 }
