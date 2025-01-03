@@ -101,6 +101,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
 
   void _showMovieInfoPopup() {
     List<String> actorsList = widget.movieInfo.Actors.split(', ');
+    List<String> Writers = widget.movieInfo.Writer.split(', ');
 
     showModalBottomSheet(
       context: context,
@@ -141,7 +142,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                           height: 150,
                         ),
                       ),
-                      const SizedBox(width: 6),
+                      const SizedBox(width: 3),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -166,7 +167,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                     "Plot: ${widget.movieInfo.plot}",
                     style: const TextStyle(color: Colors.white),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 7),
                   Text(
                     "Actors",
                     style: const TextStyle(
@@ -174,20 +175,47 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 5),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: actorsList
-                        .map((actor) => Text(
-                              actor,
-                              style: const TextStyle(
-                                  color: Color.fromARGB(255, 168, 152, 81)),
-                            ))
-                        .toList(),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: actorsList
+                            .map((actor) => Text(
+                                  actor,
+                                  style: const TextStyle(
+                                      color: Color.fromARGB(255, 168, 152, 81)),
+                                ))
+                            .toList(),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            "Written By",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          Column(
+                            children: Writers.map((writer) => Text(
+                                  " $writer",
+                                  style: TextStyle(
+                                      color: const Color.fromARGB(
+                                          220, 163, 152, 53)),
+                                )).toList(),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    height: 6,
+                  const SizedBox(height: 4),
+                  Text(
+                    "Directed By: ${widget.movieInfo.Director}",
+                    style: const TextStyle(
+                        color: Color.fromARGB(255, 128, 109, 48)),
                   ),
+                  const SizedBox(height: 10),
                   Center(
                     child: TextButton(
                       onPressed: () async {
@@ -312,7 +340,10 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           const SizedBox(height: 8),
-                          Text(widget.movie.Type),
+                          Text(
+                            widget.movie.Type,
+                            style: TextStyle(color: Colors.amber),
+                          ),
                           Text(
                             "IMDb ID: ${widget.movie.imdbID}",
                             style: Theme.of(context).textTheme.bodyLarge,
