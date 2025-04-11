@@ -1,9 +1,12 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'componets/homepage.dart';
 import 'Anim/anim.dart';
 
 void main() {
+  // Removed invalid property 'useImpeller' as it is not defined for 'FlutterView'.
   runApp(MyApp());
 }
 

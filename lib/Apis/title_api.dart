@@ -14,8 +14,7 @@ class MovieSearchService {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      print("hanim ahani m ahanim ahnaam hnaim");
-      print(response.body);
+
       if (data['Response'] == 'True') {
         return Movies.fromJson(data);
       } else {
