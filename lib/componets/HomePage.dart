@@ -97,6 +97,44 @@ class _HomepageState extends State<Homepage> {
     }
   }
 
+  void _showAppInfoDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.blueGrey[900],
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Text(
+            'Welcome to usepopcorn 🍿',
+            style: TextStyle(color: Colors.amberAccent),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              Text(
+                '• Discover trending movies.\n'
+                '• Enjoy a dynamic video background.\n'
+                '• Search by title and explore details.\n'
+                '• Built with Flutter, powered by love ❤️.',
+                style: TextStyle(color: Colors.white70, height: 1.5),
+              ),
+              SizedBox(height: 20),
+              Icon(Icons.movie_filter_outlined, size: 40, color: Colors.amber),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child:
+                  const Text('Got it!', style: TextStyle(color: Colors.amber)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -130,9 +168,12 @@ class _HomepageState extends State<Homepage> {
                   onSubmitted: (_) => _searchMovies(),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(left: 8.0),
-                child: Text("🍿", style: TextStyle(fontSize: 24)),
+              GestureDetector(
+                onTap: _showAppInfoDialog,
+                child: const Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: Text("🍿", style: TextStyle(fontSize: 24)),
+                ),
               ),
             ],
           ),
