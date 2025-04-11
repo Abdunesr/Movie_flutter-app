@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:movie_app/componets/moviedetailScreen.dart';
 import '../favourites_manager.dart';

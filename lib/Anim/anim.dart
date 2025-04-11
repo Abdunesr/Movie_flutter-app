@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 
+// ignore: use_key_in_widget_constructors
 class SplashScreens extends StatefulWidget {
   @override
+  // ignore: library_private_types_in_public_api
   _SplashScreensState createState() => _SplashScreensState();
 }
 
@@ -76,6 +78,7 @@ class _SplashScreensState extends State<SplashScreens>
                   gradient: LinearGradient(
                     colors: [
                       _backgroundAnimation.value!,
+                      // ignore: deprecated_member_use
                       _backgroundAnimation.value!.withOpacity(0.7),
                     ],
                     begin: Alignment.topLeft,
@@ -149,6 +152,7 @@ class ParticlePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
+      // ignore: deprecated_member_use
       ..color = Colors.white.withOpacity(0.4)
       ..strokeWidth = 1.5;
 

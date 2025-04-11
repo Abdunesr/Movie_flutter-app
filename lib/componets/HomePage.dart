@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:movie_app/Widgets/BottomNavigation.dart';
 import 'package:video_player/video_player.dart';
@@ -8,6 +10,7 @@ import 'moviedetailScreen.dart';
 import 'package:movie_app/Apis/title_api.dart';
 
 class Homepage extends StatefulWidget {
+  // ignore: prefer_const_constructors_in_immutables
   Homepage({super.key});
 
   @override
@@ -155,6 +158,7 @@ class _HomepageState extends State<Homepage> {
             Positioned.fill(
               child: Container(
                 color: const Color.fromARGB(255, 95, 138, 156)
+                    // ignore: deprecated_member_use
                     .withOpacity(0.4), // Semi-transparent overlay
               ),
             ),
@@ -177,8 +181,6 @@ class _HomepageState extends State<Homepage> {
 
                                   final moviesInfo = await moviesearchbytitle
                                       .fetchMovieDetails(title);
-                                  print(
-                                      "hey hey hey hey hey heye    jlfkljafkjafkjksjafmdsaf");
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
